@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { Text, View, StyleSheet, Button, Pressable } from 'react-native';
-import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
-import { EvilIcons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import * as React from "react";
+import { Text, View, StyleSheet, Button, Pressable } from "react-native";
+import { Audio } from "expo-av";
+import * as FileSystem from "expo-file-system";
+import { EvilIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function App() {
   const [recording, setRecording] = React.useState();
@@ -13,11 +13,11 @@ export default function App() {
 
   async function startRecording() {
     try {
-      console.log('Requesting permissions..');
+      console.log("Requesting permissions..");
       const { granted } = await Audio.requestPermissionsAsync();
 
       if (!granted) {
-        console.log('Permission to record audio denied');
+        console.log("Permission to record audio denied");
         return;
       }
 
@@ -26,7 +26,7 @@ export default function App() {
         playsInSilentModeIOS: true,
       });
 
-      console.log('Starting recording..');
+      console.log("Starting recording..");
       setIsRecording(true);
       const recordingObject = new Audio.Recording();
       await recordingObject.prepareToRecordAsync(
@@ -34,17 +34,17 @@ export default function App() {
       );
       await recordingObject.startAsync();
       setRecording(recordingObject);
-      console.log('Recording started');
+      console.log("Recording started");
     } catch (err) {
-      console.error('Failed to start recording', err);
+      console.error("Failed to start recording", err);
     }
   }
 
   async function stopRecording() {
     try {
-      console.log('Stopping recording..');
+      console.log("Stopping recording..");
       if (!recording) {
-        console.warn('No recording object found');
+        console.warn("No recording object found");
         return;
       }
 
@@ -52,12 +52,11 @@ export default function App() {
       const status = await recording.getStatusAsync();
 
       if (status.canRecord) {
-        console.error('Recording did not stop correctly');
+        console.error("Recording did not stop correctly");
         return;
       }
 
       setRecording(undefined);
-
 
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
@@ -65,9 +64,9 @@ export default function App() {
 
       const uri = recording.getURI();
       setRecordedFileUri(uri);
-      console.log('Recording stopped and stored at', uri);
+      console.log("Recording stopped and stored at", uri);
     } catch (err) {
-      console.error('Failed to stop recording', err);
+      console.error("Failed to stop recording", err);
     }
   }
 
@@ -86,31 +85,38 @@ export default function App() {
 
         await sound.playAsync();
       } catch (error) {
-        console.error('Error playing recorded file', error);
+        console.error("Error playing recorded file", error);
       }
     } else {
-      console.warn('No recorded file to play');
+      console.warn("No recorded file to play");
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.headingContainer}><Text style={styles.heading}>{isRecording ? "Recording 🦜" : "Record Parrot 🦜"}</Text></View>
+      <View style={styles.headingContainer}>
+        <Text style={styles.heading}>
+          {isRecording ? "Recording 🦜" : "Record Parrot 🦜"}
+        </Text>
+      </View>
       <View style={styles.buttonContainer}>
         <Pressable
           style={styles.playBtn}
-
           onPress={recording ? stopRecording : startRecording}
         >
-          <Text style={styles.playText}>{recording ? <Feather name="stop-circle" size={60} color="#fff" /> : <EvilIcons name="play" size={60} color="#fff" />} </Text>
+          <Text style={styles.playText}>
+            {recording ? (
+              <Feather name="stop-circle" size={60} color="#fff" />
+            ) : (
+              <EvilIcons name="play" size={60} color="#fff" />
+            )}{" "}
+          </Text>
         </Pressable>
 
-        <Pressable
-          style={styles.playBtn}
-
-          onPress={playRecordedFile}
-        >
-          <Text style={styles.playText}><MaterialIcons name="playlist-play" size={60} color="#fff" /> </Text>
+        <Pressable style={styles.playBtn} onPress={playRecordedFile}>
+          <Text style={styles.playText}>
+            <MaterialIcons name="playlist-play" size={60} color="#fff" />{" "}
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -120,10 +126,11 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
+    justifyContent: "center",
+    backgroundColor: "#ecf0f1",
     padding: 10,
-  }, playBtn: {
+  },
+  playBtn: {
     backgroundColor: "orangered",
     height: 100,
     width: 100,
@@ -131,20 +138,22 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     borderRadius: 50,
     margin: 10,
-  }, playText: {
+  },
+  playText: {
     margin: 20,
-
-
-  }, heading: {
+  },
+  heading: {
     padding: 20,
     fontSize: 30,
     color: "orangered",
-    fontWeight: '900'
-  }, buttonContainer: {
+    fontWeight: "900",
+  },
+  buttonContainer: {
     flex: 2,
-  }, headingContainer: {
+  },
+  headingContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
-  }
+    justifyContent: "center",
+  },
 });
